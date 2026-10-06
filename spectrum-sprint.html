@@ -43,6 +43,7 @@
   --shadow:0 1px 2px rgba(0,0,0,.4); --overlay:rgba(0,0,0,.55); color-scheme:dark}
 
 *{box-sizing:border-box}
+[hidden]{display:none!important} /* the artifact wrapper supplied this; standalone, rules like .board-wrap{display:flex} would override the hidden attribute */
 html,body{height:100%}
 body{background:var(--surface);color:var(--text);font-family:var(--f-ui);font-size:14px}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
