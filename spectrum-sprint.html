@@ -1,3 +1,7 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SPEctrum Sprint Board</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
@@ -39,6 +43,7 @@
   --shadow:0 1px 2px rgba(0,0,0,.4); --overlay:rgba(0,0,0,.55); color-scheme:dark}
 
 *{box-sizing:border-box}
+[hidden]{display:none!important} /* the artifact wrapper supplied this; standalone, rules like .board-wrap{display:flex} would override the hidden attribute */
 html,body{height:100%}
 body{background:var(--surface);color:var(--text);font-family:var(--f-ui);font-size:14px}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
@@ -1687,6 +1692,9 @@ button.vbar:hover{background:var(--surface-muted)}
 </div>
 <div id="layer"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+<script src="supabase-config.js"></script>
+<script src="supabase-sync.js"></script>
 <script>
 /* Sprint 16 team. Estimates come from Team & Capacity (hours converted to days at MD.hpd focus hours). */
 const TB=11; /* working days in the sprint timebox */
@@ -1702,7 +1710,7 @@ const TEAM={
   ve:{name:"Vetra Febriyanti Tampubolon",short:"Vetra",role:"qa",c:"#64748b",done:4,total:4,w:7,hrs:8,leave:0}};
 const ini=n=>n.split(" ").slice(0,2).map(w=>w[0]).join("").toUpperCase();
 const PEOPLE=Object.fromEntries(Object.entries(TEAM).map(([k,p])=>[k,{name:p.short,ini:ini(p.name),c:p.c}]));
-const ME="ag";
+let ME="ag"; /* the signed-in member; supabase-sync.js sets it from the account's claim */
 /* ================= RBAC (Role-Based Access Control) =================
    Based on "RBAC SPEctrum — Mapping & Rencana Implementasi" (Kiki, 2 Oct 2026).
    Design principle from the doc: separate Role from Permission. A role is just a
@@ -4564,7 +4572,10 @@ $("#view").addEventListener("click",e=>{if(state.subs["Sprint Work"]!=="Backlog"
 });
 $("#view").addEventListener("input",e=>{if(e.target.id!=="sbQ")return;SB.q=e.target.value;const pos=e.target.selectionStart;render();const n=$("#sbQ");n.focus();n.setSelectionRange(pos,pos)});
 
+/* Boot after Supabase sign-in and data load (supabase-sync.js); runs straight away when it isn't configured. */
+(window.SPX?SPX.boot:f=>f())(()=>{
 syncInc();
 Object.defineProperty(PROJ.spectrum,"backlog",{get:()=>INVENTORY.length+DRAFTS.length+pbCarry().length});
 render();
+});
 </script>
