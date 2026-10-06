@@ -29,7 +29,7 @@ To start over from the seed data, delete the rows: `delete from public.spectrum_
 
 ## Access
 
-Only signed-in users can read or write (Row Level Security; the `anon` role has no access). People create an account with email + password on the sign-in screen.
+Only signed-in users can read or write (Row Level Security; the `anon` role has no access). People create an account with email + password on the sign-in screen. "Forgot password?" emails a reset link that opens the app on a "Set a new password" screen.
 
 After the first sign-in, each person picks which team member they are (or adds themselves to the team). That member becomes "me" in the app: My Task, the timer, "assigned to me" and new tasks/backlog items use it, and the role switcher starts at the matching Job Position (FE → Frontend Developer, SE → Backend Developer, QA → QA Engineer). The links are kept in the `MEMBER_CLAIMS` row; a member already linked to another account can't be picked. To re-link someone, remove their entry from that row.
 
@@ -39,7 +39,9 @@ After the first sign-in, each person picks which team member they are (or adds t
 2. Framework preset: **Other**. Leave the build command and output directory empty.
 3. Deploy. The board is served at `/`.
 
-Then in Supabase (**Authentication → URL Configuration**) set **Site URL** to the Vercel domain and add it to **Redirect URLs**, so email-confirmation links open the deployed app.
+Production: https://spectrum-project-board.vercel.app (Vercel project `spectrum-project-board`, deploys from `main`).
+
+Then in Supabase (**Authentication → URL Configuration**) set **Site URL** to the Vercel domain and add it to **Redirect URLs**, so email-confirmation and password-reset links open the deployed app.
 
 ## Run locally
 

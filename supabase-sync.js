@@ -69,7 +69,9 @@
 .spx-primary{width:100%;height:40px;border-radius:8px;background:var(--primary,#0779E4)!important;color:#fff!important;font-weight:600}
 .spx-primary[disabled]{opacity:.6;cursor:progress}
 .spx-switch{margin-top:14px;text-align:center;font-size:13px;color:var(--text-2,#455162)}
-.spx-switch button{color:var(--primary,#0779E4);font-weight:600}
+.spx-switch button,.spx-link{color:var(--primary,#0779E4);font-weight:600}
+.spx-pwrow{display:flex;justify-content:space-between;align-items:baseline}
+.spx-link{font-size:13px}
 .spx-msg{font-size:13px;line-height:1.5;border-radius:8px;padding:10px 12px;margin:0 0 14px}
 .spx-msg.err{background:var(--red-50,#FEECEC);color:var(--red-900,#870808)}
 .spx-msg.ok{background:var(--green-50,#F1F9F5);color:var(--green-700,#2D7753)}
@@ -129,13 +131,14 @@
       <div class="spx-msg ${ok ? "ok" : "err"}" role="${ok ? "status" : "alert"}">${escH(msg)}</div>
       <label for="spxEmail">Email</label>
       <input id="spxEmail" type="email" autocomplete="email" required>
-      <label for="spxPw">Password</label>
+      <div class="spx-pwrow"><label for="spxPw">Password</label>${up ? "" : `<button type="button" class="spx-link" id="spxForgot">Forgot password?</button>`}</div>
       <input id="spxPw" type="password" autocomplete="${up ? "new-password" : "current-password"}" minlength="6" required>
       <button type="submit" class="spx-primary">${up ? "Create account" : "Sign in"}</button>
       <div class="spx-switch">${up ? "Already have an account?" : "New to SPEctrum?"} <button type="button" id="spxMode">${up ? "Sign in" : "Create an account"}</button></div>
     </form>`;
     $g("#spxEmail").focus();
     $g("#spxMode").onclick = () => showLogin(up ? "in" : "up");
+    if (!up) $g("#spxForgot").onclick = () => showForgot($g("#spxEmail").value.trim());
     $g("form").onsubmit = async e => {
       e.preventDefault();
       const email = $g("#spxEmail").value.trim(), password = $g("#spxPw").value, btn = $g(".spx-primary"), m = $g(".spx-msg");
@@ -233,6 +236,53 @@
     const pos = ROLE_POS[TEAM[key].role]; if (pos && POSITIONS[pos]) CUR_POS = pos;
   }
 
+  function showForgot(email = "", msg = "", ok = false) {
+    gate.innerHTML = `<form class="spx-card" novalidate>
+      <div class="spx-brand"><div class="logo-mark">S</div><b>SPEctrum</b></div>
+      <h1 id="spxTitle">Reset your password</h1>
+      <p>Enter the email you sign in with. We'll send you a link to set a new password.</p>
+      <div class="spx-msg ${ok ? "ok" : "err"}" role="${ok ? "status" : "alert"}">${escH(msg)}</div>
+      <label for="spxEmail">Email</label>
+      <input id="spxEmail" type="email" autocomplete="email" required value="${escH(email)}">
+      <button type="submit" class="spx-primary">Send reset link</button>
+      <div class="spx-switch"><button type="button" id="spxBack">Back to sign in</button></div>
+    </form>`;
+    $g("#spxEmail").focus();
+    $g("#spxBack").onclick = () => showLogin();
+    $g("form").onsubmit = async e => {
+      e.preventDefault();
+      const em = $g("#spxEmail").value.trim(), btn = $g(".spx-primary");
+      if (!em) { showForgot("", "Enter your email."); return; }
+      btn.disabled = true; btn.textContent = "Sending…";
+      const { error } = await client.auth.resetPasswordForEmail(em, { redirectTo: location.origin + location.pathname });
+      if (error) { showForgot(em, /rate limit|too many/i.test(error.message) ? "Too many attempts. Wait a minute, then try again." : error.message); return; }
+      showForgot(em, `If ${em} has an account, a reset link is on its way. Open it on this device.`, true);
+    };
+  }
+  let pwShown = false;
+  function showNewPassword(session, msg = "") {
+    pwShown = true;
+    gate.innerHTML = `<form class="spx-card" novalidate>
+      <div class="spx-brand"><div class="logo-mark">S</div><b>SPEctrum</b></div>
+      <h1 id="spxTitle">Set a new password</h1>
+      <p>For ${escH(session.user.email || "your account")}. Use at least 6 characters.</p>
+      <div class="spx-msg err" role="alert">${escH(msg)}</div>
+      <label for="spxPw">New password</label>
+      <input id="spxPw" type="password" autocomplete="new-password" minlength="6" required>
+      <button type="submit" class="spx-primary">Save and sign in</button>
+    </form>`;
+    $g("#spxPw").focus();
+    $g("form").onsubmit = async e => {
+      e.preventDefault();
+      const pw = $g("#spxPw").value, btn = $g(".spx-primary");
+      if (pw.length < 6) { showNewPassword(session, "Use at least 6 characters."); return; }
+      btn.disabled = true; btn.textContent = "Saving…";
+      const { error } = await client.auth.updateUser({ password: pw });
+      if (error) { showNewPassword(session, error.message); return; }
+      recovering = false; enter(session);
+    };
+  }
+
   function mountAccount() {
     const side = document.querySelector(".side"), role = document.getElementById("sideRole");
     if (!side || !role) return;
@@ -316,6 +366,8 @@
   }
 
   let startApp, entering = false;
+  /* A password-reset link signs the person in; ask for the new password before opening the board. */
+  let recovering = /type=recovery/.test(location.hash);
   async function enter(session) {
     if (started || entering || !session) return;
     entering = true; user = session.user; loading("Loading your board…");
@@ -335,10 +387,14 @@
       client = window.supabase.createClient(CFG.url, CFG.key, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
       mountGate(); loading("Checking your sign-in…");
       client.auth.onAuthStateChange((ev, session) => {
-        if (ev === "SIGNED_OUT" && started) location.reload();
-        else if (session && !started) setTimeout(() => enter(session), 0);
+        if (ev === "PASSWORD_RECOVERY" && session) { recovering = true; if (!started && !pwShown) showNewPassword(session); }
+        else if (ev === "SIGNED_OUT" && started) location.reload();
+        else if (session && !started && !recovering) setTimeout(() => enter(session), 0);
       });
-      client.auth.getSession().then(({ data }) => { if (data.session) enter(data.session); else if (!started) showLogin(); });
+      client.auth.getSession().then(({ data }) => {
+        if (data.session) { if (recovering) { if (!pwShown) showNewPassword(data.session); } else enter(data.session); }
+        else if (!started) showLogin("in", recovering ? "That reset link has expired or was already used. Use \"Forgot password?\" to get a new one." : "");
+      });
     },
     flush
   };
