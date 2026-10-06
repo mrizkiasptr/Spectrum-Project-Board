@@ -1709,7 +1709,7 @@ const TEAM={
   ve:{name:"Vetra Febriyanti Tampubolon",short:"Vetra",role:"qa",c:"#64748b",done:4,total:4,w:7,hrs:8,leave:0}};
 const ini=n=>n.split(" ").slice(0,2).map(w=>w[0]).join("").toUpperCase();
 const PEOPLE=Object.fromEntries(Object.entries(TEAM).map(([k,p])=>[k,{name:p.short,ini:ini(p.name),c:p.c}]));
-const ME="ag";
+let ME="ag"; /* the signed-in member; supabase-sync.js sets it from the account's claim */
 /* ================= RBAC (Role-Based Access Control) =================
    Based on "RBAC SPEctrum — Mapping & Rencana Implementasi" (Kiki, 2 Oct 2026).
    Design principle from the doc: separate Role from Permission. A role is just a

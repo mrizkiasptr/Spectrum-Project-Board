@@ -85,6 +85,19 @@
 .spx-out{padding:4px;border-radius:6px;color:var(--text-2,#455162);display:inline-flex}
 .spx-out:hover{background:var(--surface-muted,#f9f9f9);color:var(--text,#2d2d2d)}
 .app.collapsed .spx-email{display:none}
+.spx-card.wide{max-width:440px}
+.spx-list{display:flex;flex-direction:column;gap:6px;margin:0 0 14px;max-height:min(46vh,360px);overflow:auto;padding:2px}
+.spx-card .spx-opt{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border,#e6e6e6);border-radius:8px;cursor:pointer;font-weight:400!important;margin:0!important}
+.spx-opt:has(input:checked){border-color:var(--primary,#0779E4);background:var(--primary-soft,#EFF6FF)}
+.spx-opt:has(input:disabled){cursor:not-allowed;opacity:.55}
+.spx-opt input{width:16px;height:16px;margin:0;flex-shrink:0;accent-color:var(--primary,#0779E4)}
+.spx-av{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:600;flex-shrink:0}
+.spx-who{display:flex;flex-direction:column;min-width:0;font-size:13px;line-height:1.35}
+.spx-who b{font-weight:600}
+.spx-who small{color:var(--text-2,#455162);font-size:12px}
+.spx-new{display:grid;gap:0;margin:0 0 6px}
+.spx-new[hidden]{display:none}
+.spx-card select{width:100%;height:40px;padding:0 10px;border:1px solid var(--border-strong,#c7c8d2);border-radius:8px;background:var(--surface,#fff);color:inherit;font:inherit;margin-bottom:14px}
 .app.collapsed .spx-acct{flex-direction:column;padding:10px 0 0}`;
 
   let gate, client, user, started = false;
@@ -143,12 +156,89 @@
     };
   }
 
+  /* ---------- Who am I on the team ----------
+     The board shows "my" tasks, timers and assignments for one team member (ME). Each account claims
+     one member, kept in the MEMBER_CLAIMS row as {memberKey: {uid, email}}. A person who isn't in the
+     team list adds themselves, which also adds them to Team & Capacity. */
+  const CLAIMS = "MEMBER_CLAIMS";
+  let claims = {}, meKey = null;
+  const ROLE_POS = { fe: "dev_fe", se: "dev_be", qa: "qa_eng" };
+  const NEW_COLORS = ["#0779E4", "#7c3aed", "#db2777", "#059669", "#0891b2", "#b45309", "#64748b", "#dc2626", "#4f46e5", "#0d9488"];
+  const initials = n => String(n).trim().split(/\s+/).slice(0, 2).map(w => w[0] || "").join("").toUpperCase();
+  function syncPeople() {
+    Object.entries(TEAM).forEach(([k, p]) => { PEOPLE[k] = { name: p.short, ini: initials(p.name), c: p.c }; });
+  }
+  async function readClaims() {
+    const { data, error } = await client.from(CFG.table).select("data").eq("key", CLAIMS).maybeSingle();
+    if (error) throw error;
+    claims = data && typeof data.data === "string" ? JSON.parse(data.data) : {};
+  }
+  async function writeClaims() {
+    const s = JSON.stringify(claims);
+    const { error } = await client.from(CFG.table).upsert({ key: CLAIMS, data: s });
+    if (error) throw error;
+    last[CLAIMS] = s;
+  }
+  const myClaim = () => Object.keys(claims).find(k => claims[k] && claims[k].uid === user.id && TEAM[k]);
+  function pickMember() {
+    return new Promise(resolve => {
+      const taken = k => claims[k] && claims[k].uid !== user.id;
+      const opts = Object.entries(TEAM).map(([k, p]) => `<label class="spx-opt"><input type="radio" name="spxMe" value="${escH(k)}" ${taken(k) ? "disabled" : ""}>
+          <span class="spx-av" style="background:${escH(p.c)}" aria-hidden="true">${escH(initials(p.name))}</span>
+          <span class="spx-who"><b>${escH(p.name)}</b><small>${escH(ROLES[p.role] || p.role)}${taken(k) ? ` · linked to ${escH(claims[k].email || "another account")}` : ""}</small></span></label>`).join("");
+      gate.innerHTML = `<form class="spx-card wide" novalidate>
+        <h1 id="spxTitle">Which one is you?</h1>
+        <p>Pick your name so My Task, your timer and "assigned to me" show your own work. You only do this once.</p>
+        <div class="spx-msg err" role="alert"></div>
+        <fieldset style="border:0;padding:0;margin:0"><legend class="sr-only" style="position:absolute;left:-9999px">Team member</legend>
+        <div class="spx-list">${opts}
+          <label class="spx-opt"><input type="radio" name="spxMe" value="__new"><span class="spx-who"><b>I'm not on this list</b><small>Add yourself to the team</small></span></label>
+        </div></fieldset>
+        <div class="spx-new" hidden>
+          <label for="spxName">Full name</label><input id="spxName" autocomplete="name">
+          <label for="spxRole">Role</label><select id="spxRole">${Object.entries(ROLES).map(([k, v]) => `<option value="${k}">${escH(v)}</option>`).join("")}</select>
+        </div>
+        <button type="submit" class="spx-primary">Continue</button>
+      </form>`;
+      const f = $g("form"), msg = $g(".spx-msg"), nw = $g(".spx-new");
+      f.addEventListener("change", () => { nw.hidden = f.spxMe.value !== "__new"; if (!nw.hidden) $g("#spxName").focus(); });
+      f.onsubmit = async e => {
+        e.preventDefault();
+        const v = f.spxMe.value, btn = $g(".spx-primary");
+        if (!v) { msg.textContent = "Pick your name, or choose \"I'm not on this list\"."; return; }
+        let key = v;
+        if (v === "__new") {
+          const name = $g("#spxName").value.trim();
+          if (!name) { msg.textContent = "Enter your full name."; $g("#spxName").focus(); return; }
+          key = "m" + Math.random().toString(36).slice(2, 8);
+          TEAM[key] = { name, short: name.split(/\s+/)[0], role: $g("#spxRole").value, c: NEW_COLORS[Object.keys(TEAM).length % NEW_COLORS.length], done: 0, total: 0, w: 0, hrs: 0, leave: 0 };
+        }
+        btn.disabled = true; btn.textContent = "Saving…";
+        try {
+          await readClaims(); /* someone may have claimed it a moment ago */
+          if (claims[key] && claims[key].uid !== user.id) { if (v === "__new") delete TEAM[key]; msg.textContent = "Someone just linked that name to their account. Pick another one."; btn.disabled = false; btn.textContent = "Continue"; return pickMember().then(resolve); }
+          Object.keys(claims).forEach(k => { if (claims[k].uid === user.id) delete claims[k]; });
+          claims[key] = { uid: user.id, email: user.email || "" };
+          await writeClaims();
+        } catch (err) {
+          console.error(err); if (v === "__new") delete TEAM[key];
+          msg.textContent = "Couldn't save your choice. Check your connection and try again."; btn.disabled = false; btn.textContent = "Continue"; return;
+        }
+        resolve(key);
+      };
+    });
+  }
+  function becomeMember(key) {
+    meKey = key; ME = key; syncPeople();
+    const pos = ROLE_POS[TEAM[key].role]; if (pos && POSITIONS[pos]) CUR_POS = pos;
+  }
+
   function mountAccount() {
     const side = document.querySelector(".side"), role = document.getElementById("sideRole");
     if (!side || !role) return;
     const el = document.createElement("div"); el.className = "spx-acct"; el.id = "spxAcct";
     el.innerHTML = `<span class="spx-dot" id="spxDot" data-s="saved" role="status" aria-label="All changes saved" title="All changes saved"></span>
-      <span class="spx-email" title="${escH(user.email || "")}">${escH(user.email || "Signed in")}</span>
+      <span class="spx-email" title="${escH((TEAM[meKey] ? TEAM[meKey].name + " · " : "") + (user.email || ""))}">${escH(TEAM[meKey] ? TEAM[meKey].name : user.email || "Signed in")}</span>
       <button type="button" class="spx-out" id="spxOut" aria-label="Sign out" title="Sign out"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3M10 17l5-5-5-5M15 12H4"/></svg></button>`;
     side.insertBefore(el, role);
     el.querySelector("#spxOut").onclick = async () => { await flush(); await client.auth.signOut(); location.reload(); };
@@ -164,6 +254,7 @@
     const { data, error } = await client.from(CFG.table).select("key,data");
     if (error) throw error;
     const rows = Object.fromEntries(data.map(r => [r.key, r.data]));
+    try { claims = typeof rows[CLAIMS] === "string" ? JSON.parse(rows[CLAIMS]) : {}; } catch (_) { claims = {}; }
     STORES().forEach(([k, get, set]) => {
       if (typeof rows[k] === "string") {
         try { fill(k, get(), dec(rows[k]), set); } catch (e) { console.warn("SPEctrum: skipped store", k, e); return; }
@@ -197,13 +288,14 @@
     const map = Object.fromEntries(STORES().map(e => [e[0], e]));
     let changed = false;
     queued.forEach((s, k) => {
+      if (k === CLAIMS) { try { claims = JSON.parse(s); last[CLAIMS] = s; } catch (_) {} return; }
       const e = map[k]; if (!e) return;
       const cur = enc(k, e[1]());
       if (cur !== last[k]) return; /* I have unsaved edits to this store: mine are saved next and win. */
       try { fill(k, e[1](), dec(s), e[2]); last[k] = enc(k, e[1]()); changed = true; } catch (err) { console.warn(err); }
     });
     queued.clear();
-    if (changed && typeof render === "function") render();
+    if (changed) { syncPeople(); if (typeof render === "function") render(); }
   }
   function subscribe() {
     client.channel("spectrum-board")
@@ -229,6 +321,7 @@
     entering = true; user = session.user; loading("Loading your board…");
     try { await load(); }
     catch (e) { console.error(e); entering = false; fatal("We couldn't reach the server. Check your connection and try again.", () => enter(session)); return; }
+    becomeMember(myClaim() || await pickMember());
     gate.remove(); document.getElementById("app")?.removeAttribute("aria-hidden");
     started = true;
     startApp();
