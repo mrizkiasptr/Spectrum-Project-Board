@@ -127,7 +127,7 @@
     gate.innerHTML = `<form class="spx-card" novalidate>
       <div class="spx-brand"><div class="logo-mark">S</div><b>SPEctrum</b></div>
       <h1 id="spxTitle">${up ? "Create your account" : "Sign in"}</h1>
-      <p>${up ? "Use your work email. We'll send a link to confirm it." : "Sign in to see and update your team's sprint board."}</p>
+      <p>${up ? "Use your work email. You can start right away, no confirmation email needed." : "Sign in to see and update your team's sprint board."}</p>
       <div class="spx-msg ${ok ? "ok" : "err"}" role="${ok ? "status" : "alert"}">${escH(msg)}</div>
       <label for="spxEmail">Email</label>
       <input id="spxEmail" type="email" autocomplete="email" required>
@@ -145,16 +145,22 @@
       if (!email || !password) { m.className = "spx-msg err"; m.textContent = "Enter your email and password."; return; }
       if (up && password.length < 6) { m.className = "spx-msg err"; m.textContent = "Use at least 6 characters for your password."; return; }
       btn.disabled = true; btn.textContent = up ? "Creating account…" : "Signing in…";
-      const res = up
-        ? await client.auth.signUp({ email, password, options: { emailRedirectTo: location.origin + location.pathname } })
-        : await client.auth.signInWithPassword({ email, password });
+      if (up) {
+        /* The signup Edge Function creates the account already confirmed, then we sign in as usual. */
+        const { error } = await client.functions.invoke("signup", { body: { email, password } });
+        if (error) {
+          let t = "Couldn't create the account. Check your connection and try again.";
+          try { const j = await error.context.json(); if (j && j.error) t = j.error; } catch (_) {}
+          showLogin("up", t); $g("#spxEmail").value = email; return;
+        }
+      }
+      const res = await client.auth.signInWithPassword({ email, password });
       if (res.error) {
         const t = /invalid login/i.test(res.error.message) ? "That email and password don't match. Check them and try again."
           : /not confirmed/i.test(res.error.message) ? "Confirm your email first: open the link we sent you, then sign in."
           : res.error.message;
         showLogin(mode, t); $g("#spxEmail").value = email; return;
       }
-      if (up && !res.data.session) { showLogin("in", `Check ${email} for a confirmation link, then sign in here.`, true); return; }
       enter(res.data.session);
     };
   }
