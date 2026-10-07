@@ -10,6 +10,7 @@ Interactive prototype of SPEctrum V2 (sprint board, backlog, planning, capacity,
 | `supabase-config.js` | Supabase project URL and publishable key |
 | `supabase-sync.js` | Sign-in gate, loading/saving the board's data, realtime updates |
 | `supabase/migrations/` | SQL for the `spectrum_board_state` table (already applied) |
+| `supabase/functions/signup/` | Edge Function behind "Create an account" (deployed, `verify_jwt` off because it runs before sign-in) |
 | `vercel.json` | Serves `spectrum-sprint.html` at `/` |
 
 ## How data is stored
@@ -29,7 +30,7 @@ To start over from the seed data, delete the rows: `delete from public.spectrum_
 
 ## Access
 
-Only signed-in users can read or write (Row Level Security; the `anon` role has no access). People create an account with email + password on the sign-in screen. "Forgot password?" emails a reset link that opens the app on a "Set a new password" screen.
+Only signed-in users can read or write (Row Level Security; the `anon` role has no access). People create an account with email + password on the sign-in screen and are signed in straight away: "Create an account" calls the `signup` Edge Function (`supabase/functions/signup`), which creates the user already confirmed with the service-role key, so no confirmation email is sent. "Forgot password?" emails a reset link that opens the app on a "Set a new password" screen.
 
 After the first sign-in, each person picks which team member they are (or adds themselves to the team). That member becomes "me" in the app: My Task, the timer, "assigned to me" and new tasks/backlog items use it, and the role switcher starts at the matching Job Position (FE → Frontend Developer, SE → Backend Developer, QA → QA Engineer). The links are kept in the `MEMBER_CLAIMS` row; a member already linked to another account can't be picked. To re-link someone, remove their entry from that row.
 
