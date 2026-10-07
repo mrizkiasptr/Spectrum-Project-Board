@@ -221,6 +221,7 @@ button.chip.warn{cursor:pointer}button.chip.warn:hover{filter:brightness(.96)}
 .board-wrap{flex:1;min-width:0;overflow:auto;padding:20px 12px;display:flex;flex-direction:column}
 .board{display:flex;gap:12px;align-items:flex-start;min-width:max-content;flex:1 0 auto}
 .board .list{min-height:24px}
+.col .list{max-height:560px;overflow-y:auto;overflow-x:hidden;padding-right:4px;margin-right:-4px;scrollbar-width:thin}
 .col{width:328px;background:var(--column);border:.5px solid var(--border-strong);border-radius:12px;padding:16px 12px;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow);transition:background .15s,border-color .15s}
 .col.drop{border-color:var(--primary);background:var(--primary-soft)}
 .col-headwrap{position:relative;display:flex;flex-direction:column;gap:4px}
@@ -1612,7 +1613,7 @@ button.vbar:hover{background:var(--surface-muted)}
 /* Fills use Default (500) tokens; text uses Darker (700) tokens for contrast */
 .meter i.good,.mt-wd-bar i.good,.tt-meter i.good{background:var(--green-500)}
 .meter i.warn,.mt-wd-bar i.warn{background:var(--orange-500)}
-.col-headwrap{position:sticky;top:0;z-index:4;background:var(--column);margin:-16px -12px 0;padding:16px 12px 10px;border-radius:12px 12px 0 0}
+.col-headwrap{background:var(--column);margin:-16px -12px 0;padding:16px 12px 10px;border-radius:12px 12px 0 0;flex-shrink:0}
 .col-head{min-height:28px}
 .col-add{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;color:var(--text-2);border:1px solid transparent}
 .col-add:hover,.col-add[aria-expanded="true"]{background:var(--surface);border-color:var(--border);color:var(--primary)}
