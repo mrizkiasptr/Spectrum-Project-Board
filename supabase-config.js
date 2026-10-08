@@ -4,5 +4,7 @@
 window.SPX_CONFIG = {
   url: "https://uomajehbtzzaxkygecam.supabase.co",
   key: "sb_publishable_hU0F_g9LQNqoG7du3tlQYA_pBagSTR6",
-  table: "spectrum_board_state"
+  table: "spectrum_board_state",
+  /* Set true once the Azure (Microsoft) provider is enabled in Supabase Authentication → Providers. */
+  microsoft: false
 };

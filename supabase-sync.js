@@ -54,31 +54,101 @@
     Object.assign(target, v);
   }
 
-  /* ---------- Gate, account chip, styles ---------- */
+  /* ---------- Gate, account chip, styles ----------
+     Split layout from the Figma login page (Spectrum V.2, node 505:7032): brand + form on the left,
+     a preview of the product on the right. Every pre-board screen (sign in, create account, reset
+     password, "which one is you") lives in the left column. */
   const css = `
-.spx-gate{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:16px;background:var(--surface-muted,#f9f9f9);font-family:var(--f-ui,system-ui,sans-serif);color:var(--text,#2d2d2d)}
-.spx-card{width:100%;max-width:380px;background:var(--surface,#fff);border:1px solid var(--border,#e6e6e6);border-radius:12px;padding:28px 24px;box-shadow:0 8px 24px rgba(0,0,0,.06)}
-.spx-brand{display:flex;align-items:center;gap:10px;margin-bottom:20px}
-.spx-brand .logo-mark{flex-shrink:0}
-.spx-brand b{font-family:var(--f-head,inherit);font-size:18px}
-.spx-card h1{font:600 20px/1.3 var(--f-head,inherit);margin:0 0 4px}
-.spx-card p{margin:0 0 18px;color:var(--text-2,#455162);font-size:13px;line-height:1.5}
-.spx-card label{display:block;font-size:13px;font-weight:600;margin:0 0 6px}
-.spx-card input{width:100%;height:40px;padding:0 12px;border:1px solid var(--border-strong,#c7c8d2);border-radius:8px;background:var(--surface,#fff);color:inherit;font:inherit;margin-bottom:14px}
-.spx-card input:focus{outline:2px solid var(--primary,#0779E4);outline-offset:-1px;border-color:transparent}
-.spx-primary{width:100%;height:40px;border-radius:8px;background:var(--primary,#0779E4)!important;color:#fff!important;font-weight:600}
+.spx-gate{position:fixed;inset:0;z-index:9999;display:flex;overflow:auto;background:var(--surface,#fff);color:var(--text,#2d2d2d);font-family:var(--f-ui,system-ui,sans-serif);--spx-p:#0c6ef9;--spx-mute:var(--placeholder,#777e92);--spx-line:var(--border,#e7e7e9)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .spx-gate{--spx-p:#4c93ff}}
+:root[data-theme="dark"] .spx-gate{--spx-p:#4c93ff}
+.spx-left{flex:0 0 804px;max-width:100%;min-height:100%;display:flex;flex-direction:column;justify-content:space-between;gap:40px;padding:60px}
+.spx-logo{display:flex;align-items:center;gap:12px;margin-bottom:60px}
+.spx-logo b{font:700 20px/24px "Plus Jakarta Sans",var(--f-ui,system-ui,sans-serif);color:var(--spx-p)}
+.spx-logo .logo-mark{width:32px;height:32px;border-radius:8px;font-size:20px}
+.spx-hero h1{font:700 40px/48px var(--f-ui,system-ui,sans-serif);margin:0 0 20px;color:var(--text,#2d2d2d)}
+.spx-hero p{font:400 20px/24px var(--f-ui,system-ui,sans-serif);margin:0;color:var(--spx-mute)}
+.spx-body{width:100%}
+.spx-foot{text-align:center;font-size:16px;line-height:20px;color:var(--spx-mute)}
+.spx-card{width:100%}
+.spx-card:not([data-hero]){max-width:480px}
+.spx-card.wide{max-width:560px}
+.spx-card h1,.spx-h2{font:700 28px/32px var(--f-ui,system-ui,sans-serif);margin:0 0 8px}
+.spx-card p.spx-note,.spx-card>p{margin:0 0 24px;color:var(--spx-mute);font-size:16px;line-height:24px}
+.spx-ms{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:48px;padding:0 20px;border:1px solid var(--spx-line);border-radius:8px;background:var(--surface,#fff);color:var(--text,#2d2d2d);font:590 16px/24px var(--f-ui,system-ui,sans-serif);cursor:pointer}
+.spx-ms:hover{background:var(--surface-muted,#f9f9f9)}
+.spx-or{display:flex;align-items:center;gap:24px;margin:24px 0;color:var(--spx-mute);font-size:16px;line-height:20px;white-space:nowrap}
+.spx-or::before,.spx-or::after{content:"";flex:1;height:1px;background:var(--spx-line)}
+.spx-fields{display:flex;flex-direction:column;gap:24px}
+.spx-field{position:relative;display:flex;align-items:center;gap:8px;height:48px;padding:0 12px;border:1.5px solid var(--spx-line);border-radius:8px;background:var(--surface,#fff);color:var(--spx-mute)}
+.spx-field:focus-within{border-color:var(--spx-p)}
+.spx-field svg{flex-shrink:0}
+.spx-field input{flex:1;min-width:0;width:auto;height:100%;margin:0;padding:0;border:0;outline:0;background:transparent;color:var(--text,#2d2d2d);font:400 16px/20px var(--f-ui,system-ui,sans-serif)}
+.spx-field input:focus,.spx-field input:focus-visible{outline:0!important;box-shadow:none}
+.spx-field input::placeholder{color:var(--spx-mute);opacity:1}
+.spx-eye{display:inline-flex;padding:2px;border-radius:4px;color:var(--spx-mute)}
+.spx-eye:hover{color:var(--text,#2d2d2d)}
+.spx-card>.spx-field{margin-bottom:20px}
+.spx-card input:not([type="radio"]):not(.spx-fi),.spx-card select{width:100%;height:48px;padding:0 12px;border:1.5px solid var(--spx-line);border-radius:8px;background:var(--surface,#fff);color:inherit;font:400 16px/20px var(--f-ui,system-ui,sans-serif);margin-bottom:16px}
+.spx-card input:focus-visible,.spx-card select:focus-visible{outline:2px solid var(--spx-p);outline-offset:-1px}
+.spx-card label{display:block;font-size:14px;font-weight:600;margin:0 0 6px}
+.sr-only-spx{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.spx-actions{margin-top:60px}
+.spx-primary{display:block;width:100%;height:48px;border-radius:8px;background:var(--spx-p)!important;color:#fff!important;font:590 16px/20px var(--f-ui,system-ui,sans-serif);cursor:pointer}
+.spx-primary:hover{filter:brightness(.94)}
 .spx-primary[disabled]{opacity:.6;cursor:progress}
-.spx-switch{margin-top:14px;text-align:center;font-size:13px;color:var(--text-2,#455162)}
-.spx-switch button,.spx-link{color:var(--primary,#0779E4);font-weight:600}
-.spx-pwrow{display:flex;justify-content:space-between;align-items:baseline}
-.spx-link{font-size:13px}
-.spx-msg{font-size:13px;line-height:1.5;border-radius:8px;padding:10px 12px;margin:0 0 14px}
+.spx-help{margin:24px 0 0;font-size:16px;line-height:20px;color:var(--spx-mute)}
+.spx-help+.spx-help{margin-top:12px}
+.spx-switch{margin-top:20px;text-align:center;font-size:14px;color:var(--spx-mute)}
+.spx-link,.spx-switch button{color:var(--spx-p);font-weight:590;cursor:pointer}
+.spx-link{font-size:16px}
+.spx-switch button{font-size:14px}
+.spx-msg{font-size:14px;line-height:20px;border-radius:8px;padding:10px 12px;margin:0 0 16px}
 .spx-msg.err{background:var(--red-50,#FEECEC);color:var(--red-900,#870808)}
 .spx-msg.ok{background:var(--green-50,#F1F9F5);color:var(--green-700,#2D7753)}
 .spx-msg:empty{display:none}
-.spx-loading{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--text-2,#455162)}
-.spx-spin{width:18px;height:18px;border-radius:50%;border:2px solid var(--border,#e6e6e6);border-top-color:var(--primary,#0779E4);animation:spxspin .8s linear infinite}
+.spx-loading{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--spx-mute)}
+.spx-spin{width:18px;height:18px;border-radius:50%;border:2px solid var(--border,#e6e6e6);border-top-color:var(--spx-p);animation:spxspin .8s linear infinite}
 @keyframes spxspin{to{transform:rotate(360deg)}}
+.spx-right{flex:1 1 0;min-width:0;position:sticky;top:0;align-self:flex-start;height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px}
+.spx-wrap{flex:none;width:380px;padding:10px;border-radius:12px;background:var(--surface-muted,#f9f9f9)}
+.spx-pcard{display:flex;flex-direction:column;gap:12px;padding:20px 23px;border:1px solid var(--border,#dddfe2);border-radius:8px;background:var(--surface,#fff);overflow:hidden}
+.spx-pt{display:flex;gap:4px;align-items:center;font-size:16px;line-height:20px;white-space:nowrap}
+.spx-lbl{font:590 12px/12px var(--f-ui,system-ui,sans-serif);color:var(--spx-mute)}
+.spx-goal{margin:0;font-size:12px;line-height:12px}
+.spx-nums{display:flex;gap:18px;align-items:center;margin-top:3px}
+.spx-n{display:flex;gap:4px;align-items:flex-end}
+.spx-n .big{font:600 20px/24px "Plus Jakarta Sans",var(--f-ui,system-ui,sans-serif)}
+.spx-n .sm{font-size:14px;line-height:20px;margin-left:-4px}
+.spx-n .spx-cap{font-size:12px;line-height:15px;color:var(--spx-mute);white-space:nowrap}
+.spx-vr{width:1px;height:24px;background:var(--border,#dddfe2)}
+.spx-bar{display:flex;align-items:center;gap:8px;height:12px}
+.spx-track{flex:1;height:4px;border-radius:999px;background:var(--border,#dddfe2)}
+.spx-track i{display:block;height:4px;border-radius:999px;background:var(--green-500,#46b881)}
+.spx-bar b{font:700 12px/12px "Plus Jakarta Sans",var(--f-ui,system-ui,sans-serif)}
+.spx-tb{display:flex;flex-direction:column;gap:4px;font-size:12px;line-height:12px}
+.spx-tb span{color:#707070}
+.spx-chips{display:flex;gap:8px}
+.spx-chips span{padding:6px 12px;border-radius:999px;background:#801fff;color:#fff;font:590 12px/12px var(--f-ui,system-ui,sans-serif)}
+.spx-evcard{display:flex;flex-direction:column;gap:12px;align-items:stretch;height:546px;width:360px;padding:20px;border:1px solid var(--border,#dddfe2);border-radius:12px;background:var(--surface,#fff);overflow:hidden}
+.spx-evh b{display:block;font:700 16px/20px "Plus Jakarta Sans",var(--f-ui,system-ui,sans-serif)}
+.spx-evh span{display:block;margin-top:4px;font:700 14px/20px "Plus Jakarta Sans",var(--f-ui,system-ui,sans-serif);color:var(--spx-mute)}
+.spx-evs{flex:1;min-height:0;display:flex;flex-direction:column;gap:16px}
+.spx-ev{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px;padding:8px;border-radius:6px;background:color-mix(in srgb,var(--c) var(--t),var(--surface,#fff));overflow:hidden}
+.spx-evrow{display:flex;gap:8px;align-items:stretch}
+.spx-evrow>i{width:4px;border-radius:8px;background:var(--c);flex:none}
+.spx-evbody{display:flex;flex-direction:column;gap:8px;min-width:0}
+.spx-evbody b{display:block;font:590 12px/12px var(--f-ui,system-ui,sans-serif);margin-bottom:8px}
+.spx-evbody span.t{display:block;font-size:12px;line-height:12px}
+.spx-avs{display:flex}
+.spx-avs span{width:20px;height:20px;margin-right:-10px;border:1px solid var(--border,#e6e6e6);border-radius:50%}
+.spx-avs span:last-child{margin-right:0}
+.spx-join{margin-top:auto;padding:4px 12px;border:1px solid var(--spx-line);border-radius:6px;background:var(--surface,#fff);text-align:center;font:590 12px/20px var(--f-ui,system-ui,sans-serif)}
+.spx-more{display:flex;gap:8px;align-items:center;justify-content:center;padding:4px 12px;border:1px solid var(--spx-p);border-radius:6px;color:var(--spx-p);font:590 12px/20px var(--f-ui,system-ui,sans-serif)}
+.spx-tt{position:relative;display:flex;flex-direction:column;gap:16px;padding:16px;border:1px solid var(--border,#dddfe2);border-radius:8px;background:var(--surface,#fff);overflow:hidden}
+.spx-tt b{font:700 28px/32px var(--f-ui,system-ui,sans-serif)}
+.spx-tt span{font-size:16px;line-height:20px;color:var(--spx-mute)}
+.spx-tt svg{position:absolute;right:-17px;top:34px}
 .spx-acct{display:flex;align-items:center;gap:8px;padding:10px 16px 0;font-size:12px;color:var(--text-2,#455162);min-width:0}
 .spx-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--green-500,#46B881)}
 .spx-dot[data-s="saving"]{background:var(--orange-500,#FFAD0D)}
@@ -87,58 +157,152 @@
 .spx-out{padding:4px;border-radius:6px;color:var(--text-2,#455162);display:inline-flex}
 .spx-out:hover{background:var(--surface-muted,#f9f9f9);color:var(--text,#2d2d2d)}
 .app.collapsed .spx-email{display:none}
-.spx-card.wide{max-width:440px}
+.app.collapsed .spx-acct{flex-direction:column;padding:10px 0 0}
 .spx-list{display:flex;flex-direction:column;gap:6px;margin:0 0 14px;max-height:min(46vh,360px);overflow:auto;padding:2px}
 .spx-card .spx-opt{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border,#e6e6e6);border-radius:8px;cursor:pointer;font-weight:400!important;margin:0!important}
-.spx-opt:has(input:checked){border-color:var(--primary,#0779E4);background:var(--primary-soft,#EFF6FF)}
+.spx-opt:has(input:checked){border-color:var(--spx-p);background:var(--primary-soft,#EFF6FF)}
 .spx-opt:has(input:disabled){cursor:not-allowed;opacity:.55}
-.spx-opt input{width:16px;height:16px;margin:0;flex-shrink:0;accent-color:var(--primary,#0779E4)}
+.spx-opt input{width:16px!important;height:16px!important;margin:0!important;flex-shrink:0;accent-color:var(--spx-p)}
 .spx-av{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:600;flex-shrink:0}
 .spx-who{display:flex;flex-direction:column;min-width:0;font-size:13px;line-height:1.35}
 .spx-who b{font-weight:600}
 .spx-who small{color:var(--text-2,#455162);font-size:12px}
 .spx-new{display:grid;gap:0;margin:0 0 6px}
-.spx-new[hidden]{display:none}
-.spx-card select{width:100%;height:40px;padding:0 10px;border:1px solid var(--border-strong,#c7c8d2);border-radius:8px;background:var(--surface,#fff);color:inherit;font:inherit;margin-bottom:14px}
-.app.collapsed .spx-acct{flex-direction:column;padding:10px 0 0}`;
+@media (max-width:1100px){
+  .spx-right{display:none}
+  .spx-left{flex:1 1 100%}
+  .spx-top,.spx-body{width:100%;max-width:560px;margin-inline:auto}
+}
+@media (max-width:600px){
+  .spx-left{padding:24px;gap:32px}
+  .spx-logo{margin-bottom:32px}
+  .spx-hero h1{font-size:28px;line-height:36px}
+  .spx-hero p{font-size:16px;line-height:24px}
+  .spx-actions{margin-top:32px}
+}`;
 
   let gate, client, user, started = false;
   const last = {};
   const $g = s => gate.querySelector(s);
   const escH = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
+  /* Icons, drawn inline (the Figma asset files can't be fetched from the build sandbox). */
+  const svg = (p, s = 20) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+  const ICON = {
+    mail: svg('<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7.5l8.5 6 8.5-6"/>'),
+    lock: svg('<rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/>'),
+    eye: svg('<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'),
+    eyeOff: svg('<path d="M3 3l18 18"/><path d="M10.6 6.1A10 10 0 0 1 12 6c6.4 0 10 6 10 6a17 17 0 0 1-3.2 3.9M6.5 7.6A16.6 16.6 0 0 0 2 12s3.6 6 10 6a9.8 9.8 0 0 0 4.1-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>'),
+    arrow: svg('<path d="M5 12h14M13 6l6 6-6 6"/>'),
+    ms: '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="9.5" height="9.5" fill="#F25022"/><rect x="12.5" y="2" width="9.5" height="9.5" fill="#7FBA00"/><rect x="2" y="12.5" width="9.5" height="9.5" fill="#00A4EF"/><rect x="12.5" y="12.5" width="9.5" height="9.5" fill="#FFB900"/></svg>'
+  };
+  /* One input row: icon, placeholder-as-label (with a hidden real label), optional show/hide eye. */
+  function field({ id, type = "text", ph, icon, auto, value = "", eye = false }) {
+    return `<div class="spx-field"><label for="${id}" class="sr-only-spx">${escH(ph)}</label>${ICON[icon]}
+      <input class="spx-fi" id="${id}" type="${type}" placeholder="${escH(ph)}" autocomplete="${auto}" ${type === "password" ? 'minlength="6"' : ""} required value="${escH(value)}">
+      ${eye ? `<button type="button" class="spx-eye" id="spxEye" aria-label="Show password" aria-pressed="false">${ICON.eyeOff}</button>` : ""}</div>`;
+  }
+  function bindEye() {
+    const b = $g("#spxEye"); if (!b) return;
+    b.onclick = () => {
+      const i = $g("#spxPw"), show = i.type === "password";
+      i.type = show ? "text" : "password";
+      b.setAttribute("aria-pressed", show); b.setAttribute("aria-label", show ? "Hide password" : "Show password");
+      b.innerHTML = show ? ICON.eye : ICON.eyeOff;
+    };
+  }
+
+  function previewHTML() {
+    const d = new Date();
+    const today = `${d.toLocaleDateString("en-US", { weekday: "long" })}, ${String(d.getDate()).padStart(2, "0")} ${d.toLocaleDateString("en-US", { month: "short" })} ${d.getFullYear()}`;
+    const avs = a => `<div class="spx-avs">${a.map(c => `<span style="background:${c}"></span>`).join("")}</div>`;
+    const ev = (c, t, title, time, a) => `<div class="spx-ev" style="--c:${c};--t:${t}%"><div class="spx-evrow"><i></i><div class="spx-evbody"><div><b>${title}</b><span class="t">${time}</span></div>${avs(a)}</div></div><div class="spx-join">Join</div></div>`;
+    return `<div class="spx-wrap"><div class="spx-pcard">
+        <div class="spx-pt"><b>E Collection</b><span>-</span><span>Sprint 5_2025</span></div>
+        <div class="spx-lbl">Sprint Goals</div>
+        <p class="spx-goal">Meningkatkan keandalan dan visibilitas proses SFTP melalui finalisasi konfigurasi, logging, dan skema resend untuk mendukung monitoring system yang ada</p>
+        <div><div class="spx-lbl" style="font-weight:600">Sprint Progress</div>
+          <div class="spx-nums"><div class="spx-n"><span class="big">12</span><span class="sm">/24</span><span class="spx-cap">Total of task</span></div><span class="spx-vr"></span><div class="spx-n"><span class="big">10</span><span class="spx-cap">Total of task</span></div></div></div>
+        <div class="spx-bar"><div class="spx-track"><i style="width:50%"></i></div><b>50%</b></div>
+        <div class="spx-tb"><span>Timebox</span><b style="font-weight:600">Sept 21, 2022 - Sept 25, 2022</b></div>
+        <div class="spx-chips"><span>10 Days Timebox</span><span>4 Days Left</span></div></div></div>
+      <div class="spx-wrap"><div class="spx-evcard">
+        <div class="spx-evh"><b>Today’s Event</b><span>${today}</span></div>
+        <div class="spx-evs">
+          ${ev("#0c6ef9", 8, "Daily scrum - Spectrum Sprint 12", "09.00 - 09.15", ["#0779E4", "#7c3aed", "#db2777"])}
+          ${ev("#ffad0d", 8, "Weekly UI/UX", "11.00 - 12.00", ["#f59e0b", "#0891b2", "#64748b"])}
+          ${ev("#a865ff", 12, "Qrisan - Sprint Review &amp; Retro", "13.00 - 15.00", ["#059669", "#b45309", "#0779E4"])}
+        </div>
+        <div class="spx-more">See More ${ICON.arrow}</div></div></div>
+      <div class="spx-wrap"><div class="spx-tt"><b>20</b><span>Total Task</span>
+        <svg width="100" height="100" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 62 38 18l50 10 8 52-46 16z" fill="color-mix(in srgb,#0c6ef9 12%,var(--surface,#fff))"/><rect x="36" y="38" width="30" height="38" rx="5" fill="#0c6ef9"/><rect x="43" y="33" width="16" height="9" rx="3" fill="#0c6ef9" stroke="var(--surface,#fff)" stroke-width="2"/><path d="M43 52h16M43 60h16M43 68h10" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg></div></div>`;
+  }
+
   function mountGate() {
     const st = document.createElement("style"); st.textContent = css; document.head.appendChild(st);
     gate = document.createElement("div"); gate.className = "spx-gate"; gate.setAttribute("role", "dialog");
     gate.setAttribute("aria-modal", "true"); gate.setAttribute("aria-labelledby", "spxTitle");
+    gate.innerHTML = `<section class="spx-left">
+        <div class="spx-top">
+          <div class="spx-logo"><div class="logo-mark">S</div><b>SPEctrum</b></div>
+          <div class="spx-hero" id="spxHero" hidden><h1 id="spxHeroTitle">Simplify Work, Collaborate Better, Deliver More</h1>
+            <p>Organize tasks, monitor progress, and ensure every project stays on track — effortlessly and efficiently.</p></div>
+        </div>
+        <div class="spx-body" id="spxBody"></div>
+        <div class="spx-foot">Powered by SPE Solution 2025</div>
+      </section>
+      <aside class="spx-right" aria-hidden="true">${previewHTML()}</aside>`;
     document.body.appendChild(gate);
     document.getElementById("app")?.setAttribute("aria-hidden", "true");
   }
+  /* Every pre-board screen renders into the left column through here. A form tagged data-hero also shows the headline. */
+  const stage = {
+    set html(h) {
+      $g("#spxBody").innerHTML = h;
+      const hero = /data-hero/.test(h);
+      $g("#spxHero").hidden = !hero;
+      gate.setAttribute("aria-labelledby", hero ? "spxHeroTitle" : "spxTitle");
+    }
+  };
   function loading(text) {
-    gate.innerHTML = `<div class="spx-loading" role="status"><span class="spx-spin" aria-hidden="true"></span>${escH(text)}</div>`;
+    stage.html = `<div class="spx-loading" role="status"><span class="spx-spin" aria-hidden="true"></span>${escH(text)}</div>`;
   }
   function fatal(text, retry) {
-    gate.innerHTML = `<div class="spx-card"><h1 id="spxTitle">Can't load the board</h1><p class="spx-msg err" role="alert">${escH(text)}</p>
+    stage.html = `<div class="spx-card"><h1 id="spxTitle">Can't load the board</h1><div class="spx-msg err" role="alert">${escH(text)}</div>
       <button type="button" class="spx-primary" id="spxRetry">Try again</button></div>`;
     $g("#spxRetry").onclick = retry;
   }
   function showLogin(mode = "in", msg = "", ok = false) {
     const up = mode === "up";
-    gate.innerHTML = `<form class="spx-card" novalidate>
-      <div class="spx-brand"><div class="logo-mark">S</div><b>SPEctrum</b></div>
-      <h1 id="spxTitle">${up ? "Create your account" : "Sign in"}</h1>
-      <p>${up ? "Use your work email. You can start right away, no confirmation email needed." : "Sign in to see and update your team's sprint board."}</p>
+    stage.html = `<form class="spx-card" data-hero novalidate>
+      ${up
+        ? `<h2 class="spx-h2" id="spxFormTitle">Create your account</h2><p class="spx-note">Use your work email. You can start right away, no confirmation email needed.</p>`
+        : `<button type="button" class="spx-ms" id="spxMs">${ICON.ms}<span>Sign in with Microsoft</span></button><div class="spx-or" role="separator">or sign in with</div>`}
       <div class="spx-msg ${ok ? "ok" : "err"}" role="${ok ? "status" : "alert"}">${escH(msg)}</div>
-      <label for="spxEmail">Email</label>
-      <input id="spxEmail" type="email" autocomplete="email" required>
-      <div class="spx-pwrow"><label for="spxPw">Password</label>${up ? "" : `<button type="button" class="spx-link" id="spxForgot">Forgot password?</button>`}</div>
-      <input id="spxPw" type="password" autocomplete="${up ? "new-password" : "current-password"}" minlength="6" required>
-      <button type="submit" class="spx-primary">${up ? "Create account" : "Sign in"}</button>
-      <div class="spx-switch">${up ? "Already have an account?" : "New to SPEctrum?"} <button type="button" id="spxMode">${up ? "Sign in" : "Create an account"}</button></div>
+      <div class="spx-fields">
+        ${field({ id: "spxEmail", type: "email", ph: "Email", icon: "mail", auto: "email" })}
+        ${field({ id: "spxPw", type: "password", ph: "Password", icon: "lock", auto: up ? "new-password" : "current-password", eye: true })}
+      </div>
+      <div class="spx-actions">
+        <button type="submit" class="spx-primary">${up ? "Create account" : "Sign In"}</button>
+        ${up
+          ? `<p class="spx-help">Already have an account? <button type="button" class="spx-link" id="spxMode">Sign in</button></p>`
+          : `<p class="spx-help">Having trouble signing in? <button type="button" class="spx-link" id="spxForgot">Reset your password</button></p>
+             <p class="spx-help">New to SPEctrum? <button type="button" class="spx-link" id="spxMode">Create an account</button></p>`}
+      </div>
     </form>`;
     $g("#spxEmail").focus();
+    bindEye();
     $g("#spxMode").onclick = () => showLogin(up ? "in" : "up");
-    if (!up) $g("#spxForgot").onclick = () => showForgot($g("#spxEmail").value.trim());
+    if (!up) {
+      $g("#spxForgot").onclick = () => showForgot($g("#spxEmail").value.trim());
+      $g("#spxMs").onclick = async () => {
+        const m = $g(".spx-msg"); m.className = "spx-msg err";
+        if (!CFG.microsoft) { m.textContent = "Sign in with Microsoft isn't set up for this project yet. Use your email and password."; return; }
+        const { error } = await client.auth.signInWithOAuth({ provider: "azure", options: { scopes: "email", redirectTo: location.origin + location.pathname } });
+        if (error) m.textContent = error.message;
+      };
+    }
     $g("form").onsubmit = async e => {
       e.preventDefault();
       const email = $g("#spxEmail").value.trim(), password = $g("#spxPw").value, btn = $g(".spx-primary"), m = $g(".spx-msg");
@@ -195,7 +359,7 @@
       const opts = Object.entries(TEAM).map(([k, p]) => `<label class="spx-opt"><input type="radio" name="spxMe" value="${escH(k)}" ${taken(k) ? "disabled" : ""}>
           <span class="spx-av" style="background:${escH(p.c)}" aria-hidden="true">${escH(initials(p.name))}</span>
           <span class="spx-who"><b>${escH(p.name)}</b><small>${escH(ROLES[p.role] || p.role)}${taken(k) ? ` · linked to ${escH(claims[k].email || "another account")}` : ""}</small></span></label>`).join("");
-      gate.innerHTML = `<form class="spx-card wide" novalidate>
+      stage.html = `<form class="spx-card wide" novalidate>
         <h1 id="spxTitle">Which one is you?</h1>
         <p>Pick your name so My Task, your timer and "assigned to me" show your own work. You only do this once.</p>
         <div class="spx-msg err" role="alert"></div>
@@ -243,13 +407,11 @@
   }
 
   function showForgot(email = "", msg = "", ok = false) {
-    gate.innerHTML = `<form class="spx-card" novalidate>
-      <div class="spx-brand"><div class="logo-mark">S</div><b>SPEctrum</b></div>
+    stage.html = `<form class="spx-card" novalidate>
       <h1 id="spxTitle">Reset your password</h1>
       <p>Enter the email you sign in with. We'll send you a link to set a new password.</p>
       <div class="spx-msg ${ok ? "ok" : "err"}" role="${ok ? "status" : "alert"}">${escH(msg)}</div>
-      <label for="spxEmail">Email</label>
-      <input id="spxEmail" type="email" autocomplete="email" required value="${escH(email)}">
+      ${field({ id: "spxEmail", type: "email", ph: "Email", icon: "mail", auto: "email", value: email })}
       <button type="submit" class="spx-primary">Send reset link</button>
       <div class="spx-switch"><button type="button" id="spxBack">Back to sign in</button></div>
     </form>`;
@@ -268,16 +430,14 @@
   let pwShown = false;
   function showNewPassword(session, msg = "") {
     pwShown = true;
-    gate.innerHTML = `<form class="spx-card" novalidate>
-      <div class="spx-brand"><div class="logo-mark">S</div><b>SPEctrum</b></div>
+    stage.html = `<form class="spx-card" novalidate>
       <h1 id="spxTitle">Set a new password</h1>
       <p>For ${escH(session.user.email || "your account")}. Use at least 6 characters.</p>
       <div class="spx-msg err" role="alert">${escH(msg)}</div>
-      <label for="spxPw">New password</label>
-      <input id="spxPw" type="password" autocomplete="new-password" minlength="6" required>
+      ${field({ id: "spxPw", type: "password", ph: "New password", icon: "lock", auto: "new-password", eye: true })}
       <button type="submit" class="spx-primary">Save and sign in</button>
     </form>`;
-    $g("#spxPw").focus();
+    $g("#spxPw").focus(); bindEye();
     $g("form").onsubmit = async e => {
       e.preventDefault();
       const pw = $g("#spxPw").value, btn = $g(".spx-primary");
