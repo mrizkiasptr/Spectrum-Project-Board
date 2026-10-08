@@ -55,100 +55,97 @@
   }
 
   /* ---------- Gate, account chip, styles ----------
-     Split layout from the Figma login page (Spectrum V.2, node 505:7032): brand + form on the left,
-     a preview of the product on the right. Every pre-board screen (sign in, create account, reset
-     password, "which one is you") lives in the left column. */
+     Split layout based on the Figma login page (Spectrum V.2, node 505:7032), scaled down to sit
+     comfortably on a laptop screen: brand top-left, headline + form centred in the left half,
+     a compact product preview centred in the right half. Every pre-board screen (sign in, create
+     account, reset password, "which one is you") renders in the left half. */
   const css = `
-.spx-gate{position:fixed;inset:0;z-index:9999;display:flex;overflow:auto;background:var(--surface,#fff);color:var(--text,#2d2d2d);font-family:var(--f-ui,system-ui,sans-serif);--spx-p:#0c6ef9;--spx-mute:var(--placeholder,#777e92);--spx-line:var(--border,#e7e7e9)}
+.spx-gate{position:fixed;inset:0;z-index:9999;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);overflow:auto;background:var(--surface,#fff);color:var(--text,#2d2d2d);font-family:var(--f-ui,system-ui,sans-serif);--spx-p:#0c6ef9;--spx-mute:var(--placeholder,#777e92);--spx-line:var(--border,#e7e7e9)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .spx-gate{--spx-p:#4c93ff}}
 :root[data-theme="dark"] .spx-gate{--spx-p:#4c93ff}
-.spx-left{flex:0 0 804px;max-width:100%;min-height:100%;display:flex;flex-direction:column;justify-content:space-between;gap:40px;padding:60px}
-.spx-logo{display:flex;align-items:center;gap:12px;margin-bottom:60px}
-.spx-logo b{font:700 20px/24px "Plus Jakarta Sans",var(--f-ui,system-ui,sans-serif);color:var(--spx-p)}
-.spx-logo .logo-mark{width:32px;height:32px;border-radius:8px;font-size:20px}
-.spx-hero h1{font:700 40px/48px var(--f-ui,system-ui,sans-serif);margin:0 0 20px;color:var(--text,#2d2d2d)}
-.spx-hero p{font:400 20px/24px var(--f-ui,system-ui,sans-serif);margin:0;color:var(--spx-mute)}
-.spx-body{width:100%}
-.spx-foot{text-align:center;font-size:16px;line-height:20px;color:var(--spx-mute)}
+.spx-left{display:flex;flex-direction:column;min-height:100vh;padding:28px 40px}
+.spx-logo{display:flex;align-items:center;gap:10px}
+.spx-logo b{font:700 18px/24px "Plus Jakarta Sans",var(--f-ui,system-ui,sans-serif);color:var(--spx-p)}
+.spx-main{width:100%;max-width:400px;margin:auto;padding:32px 0}
+.spx-hero{margin-bottom:32px}
+.spx-hero h1{font:700 30px/38px var(--f-ui,system-ui,sans-serif);letter-spacing:-.01em;margin:0 0 12px;color:var(--text,#2d2d2d)}
+.spx-hero p{font:400 15px/24px var(--f-ui,system-ui,sans-serif);margin:0;color:var(--spx-mute)}
+.spx-foot{text-align:center;font-size:13px;line-height:20px;color:var(--spx-mute)}
 .spx-card{width:100%}
-.spx-card:not([data-hero]){max-width:480px}
-.spx-card.wide{max-width:560px}
-.spx-card h1,.spx-h2{font:700 28px/32px var(--f-ui,system-ui,sans-serif);margin:0 0 8px}
-.spx-card p.spx-note,.spx-card>p{margin:0 0 24px;color:var(--spx-mute);font-size:16px;line-height:24px}
-.spx-ms{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:48px;padding:0 20px;border:1px solid var(--spx-line);border-radius:8px;background:var(--surface,#fff);color:var(--text,#2d2d2d);font:590 16px/24px var(--f-ui,system-ui,sans-serif);cursor:pointer}
+.spx-card h1,.spx-h2{font:700 24px/32px var(--f-ui,system-ui,sans-serif);margin:0 0 6px}
+.spx-card p.spx-note,.spx-card>p{margin:0 0 20px;color:var(--spx-mute);font-size:14px;line-height:22px}
+.spx-ms{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:44px;padding:0 16px;border:1px solid var(--spx-line);border-radius:8px;background:var(--surface,#fff);color:var(--text,#2d2d2d);font:590 15px/20px var(--f-ui,system-ui,sans-serif);cursor:pointer}
+.spx-ms svg{width:20px;height:20px}
 .spx-ms:hover{background:var(--surface-muted,#f9f9f9)}
-.spx-or{display:flex;align-items:center;gap:24px;margin:24px 0;color:var(--spx-mute);font-size:16px;line-height:20px;white-space:nowrap}
+.spx-or{display:flex;align-items:center;gap:16px;margin:20px 0;color:var(--spx-mute);font-size:13px;line-height:20px;white-space:nowrap}
 .spx-or::before,.spx-or::after{content:"";flex:1;height:1px;background:var(--spx-line)}
-.spx-fields{display:flex;flex-direction:column;gap:24px}
-.spx-field{position:relative;display:flex;align-items:center;gap:8px;height:48px;padding:0 12px;border:1.5px solid var(--spx-line);border-radius:8px;background:var(--surface,#fff);color:var(--spx-mute)}
+.spx-fields{display:flex;flex-direction:column;gap:16px}
+.spx-field{position:relative;display:flex;align-items:center;gap:8px;height:44px;padding:0 12px;border:1.5px solid var(--spx-line);border-radius:8px;background:var(--surface,#fff);color:var(--spx-mute)}
 .spx-field:focus-within{border-color:var(--spx-p)}
-.spx-field svg{flex-shrink:0}
-.spx-field input{flex:1;min-width:0;width:auto;height:100%;margin:0;padding:0;border:0;outline:0;background:transparent;color:var(--text,#2d2d2d);font:400 16px/20px var(--f-ui,system-ui,sans-serif)}
+.spx-field svg{flex-shrink:0;width:18px;height:18px}
+.spx-field input{flex:1;min-width:0;width:auto;height:100%;margin:0;padding:0;border:0;outline:0;background:transparent;color:var(--text,#2d2d2d);font:400 15px/20px var(--f-ui,system-ui,sans-serif)}
 .spx-field input:focus,.spx-field input:focus-visible{outline:0!important;box-shadow:none}
 .spx-field input::placeholder{color:var(--spx-mute);opacity:1}
-.spx-eye{display:inline-flex;padding:2px;border-radius:4px;color:var(--spx-mute)}
+.spx-eye{display:inline-flex;padding:2px;border-radius:4px;color:var(--spx-mute);cursor:pointer}
 .spx-eye:hover{color:var(--text,#2d2d2d)}
-.spx-card>.spx-field{margin-bottom:20px}
-.spx-card input:not([type="radio"]):not(.spx-fi),.spx-card select{width:100%;height:48px;padding:0 12px;border:1.5px solid var(--spx-line);border-radius:8px;background:var(--surface,#fff);color:inherit;font:400 16px/20px var(--f-ui,system-ui,sans-serif);margin-bottom:16px}
+.spx-card>.spx-field{margin-bottom:16px}
+.spx-card input:not([type="radio"]):not(.spx-fi),.spx-card select{width:100%;height:44px;padding:0 12px;border:1.5px solid var(--spx-line);border-radius:8px;background:var(--surface,#fff);color:inherit;font:400 15px/20px var(--f-ui,system-ui,sans-serif);margin-bottom:14px}
 .spx-card input:focus-visible,.spx-card select:focus-visible{outline:2px solid var(--spx-p);outline-offset:-1px}
-.spx-card label{display:block;font-size:14px;font-weight:600;margin:0 0 6px}
+.spx-card label{display:block;font-size:13px;font-weight:600;margin:0 0 6px}
 .sr-only-spx{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.spx-actions{margin-top:60px}
-.spx-primary{display:block;width:100%;height:48px;border-radius:8px;background:var(--spx-p)!important;color:#fff!important;font:590 16px/20px var(--f-ui,system-ui,sans-serif);cursor:pointer}
+.spx-actions{margin-top:24px}
+.spx-primary{display:block;width:100%;height:44px;border-radius:8px;background:var(--spx-p)!important;color:#fff!important;font:590 15px/20px var(--f-ui,system-ui,sans-serif);cursor:pointer}
 .spx-primary:hover{filter:brightness(.94)}
 .spx-primary[disabled]{opacity:.6;cursor:progress}
-.spx-help{margin:24px 0 0;font-size:16px;line-height:20px;color:var(--spx-mute)}
-.spx-help+.spx-help{margin-top:12px}
-.spx-switch{margin-top:20px;text-align:center;font-size:14px;color:var(--spx-mute)}
+.spx-help{margin:16px 0 0;font-size:14px;line-height:20px;color:var(--spx-mute)}
+.spx-help+.spx-help{margin-top:8px}
+.spx-switch{margin-top:16px;text-align:center;font-size:14px;color:var(--spx-mute)}
 .spx-link,.spx-switch button{color:var(--spx-p);font-weight:590;cursor:pointer}
-.spx-link{font-size:16px}
-.spx-switch button{font-size:14px}
-.spx-msg{font-size:14px;line-height:20px;border-radius:8px;padding:10px 12px;margin:0 0 16px}
+.spx-link,.spx-switch button{font-size:14px}
+.spx-msg{font-size:13px;line-height:20px;border-radius:8px;padding:9px 12px;margin:0 0 14px}
 .spx-msg.err{background:var(--red-50,#FEECEC);color:var(--red-900,#870808)}
 .spx-msg.ok{background:var(--green-50,#F1F9F5);color:var(--green-700,#2D7753)}
 .spx-msg:empty{display:none}
 .spx-loading{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--spx-mute)}
 .spx-spin{width:18px;height:18px;border-radius:50%;border:2px solid var(--border,#e6e6e6);border-top-color:var(--spx-p);animation:spxspin .8s linear infinite}
 @keyframes spxspin{to{transform:rotate(360deg)}}
-.spx-right{flex:1 1 0;min-width:0;position:sticky;top:0;align-self:flex-start;height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px}
-.spx-wrap{flex:none;width:380px;padding:10px;border-radius:12px;background:var(--surface-muted,#f9f9f9)}
-.spx-pcard{display:flex;flex-direction:column;gap:12px;padding:20px 23px;border:1px solid var(--border,#dddfe2);border-radius:8px;background:var(--surface,#fff);overflow:hidden}
-.spx-pt{display:flex;gap:4px;align-items:center;font-size:16px;line-height:20px;white-space:nowrap}
-.spx-lbl{font:590 12px/12px var(--f-ui,system-ui,sans-serif);color:var(--spx-mute)}
-.spx-goal{margin:0;font-size:12px;line-height:12px}
-.spx-nums{display:flex;gap:18px;align-items:center;margin-top:3px}
-.spx-n{display:flex;gap:4px;align-items:flex-end}
-.spx-n .big{font:600 20px/24px "Plus Jakarta Sans",var(--f-ui,system-ui,sans-serif)}
-.spx-n .sm{font-size:14px;line-height:20px;margin-left:-4px}
-.spx-n .spx-cap{font-size:12px;line-height:15px;color:var(--spx-mute);white-space:nowrap}
-.spx-vr{width:1px;height:24px;background:var(--border,#dddfe2)}
-.spx-bar{display:flex;align-items:center;gap:8px;height:12px}
-.spx-track{flex:1;height:4px;border-radius:999px;background:var(--border,#dddfe2)}
+.spx-right{position:sticky;top:0;align-self:start;height:100vh;display:flex;align-items:center;justify-content:center;padding:32px;overflow:hidden;border-left:1px solid var(--spx-line);background:color-mix(in srgb,var(--spx-p) 4%,var(--surface,#fff))}
+.spx-stack{width:100%;max-width:340px;display:flex;flex-direction:column;gap:16px}
+.spx-pcard,.spx-evcard,.spx-tt{padding:16px;border:1px solid var(--border,#dddfe2);border-radius:12px;background:var(--surface,#fff);box-shadow:0 1px 2px rgba(16,24,40,.04),0 8px 24px rgba(16,24,40,.05)}
+.spx-pcard{display:flex;flex-direction:column;gap:10px}
+.spx-pt{display:flex;gap:4px;align-items:baseline;font-size:14px;line-height:20px;white-space:nowrap}
+.spx-lbl{font:590 11px/16px var(--f-ui,system-ui,sans-serif);color:var(--spx-mute)}
+.spx-goal{margin:0;font-size:12px;line-height:16px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.spx-prog{display:flex;align-items:baseline;gap:6px}
+.spx-prog .big{font:600 20px/24px "Plus Jakarta Sans",var(--f-ui,system-ui,sans-serif)}
+.spx-prog .sm{font-size:13px;line-height:20px;margin-left:-3px}
+.spx-prog .spx-cap{font-size:11px;line-height:16px;color:var(--spx-mute);white-space:nowrap}
+.spx-prog b{margin-left:auto;font:700 12px/16px "Plus Jakarta Sans",var(--f-ui,system-ui,sans-serif)}
+.spx-track{height:4px;border-radius:999px;background:var(--border,#dddfe2)}
 .spx-track i{display:block;height:4px;border-radius:999px;background:var(--green-500,#46b881)}
-.spx-bar b{font:700 12px/12px "Plus Jakarta Sans",var(--f-ui,system-ui,sans-serif)}
-.spx-tb{display:flex;flex-direction:column;gap:4px;font-size:12px;line-height:12px}
-.spx-tb span{color:#707070}
-.spx-chips{display:flex;gap:8px}
-.spx-chips span{padding:6px 12px;border-radius:999px;background:#801fff;color:#fff;font:590 12px/12px var(--f-ui,system-ui,sans-serif)}
-.spx-evcard{display:flex;flex-direction:column;gap:12px;align-items:stretch;height:546px;width:360px;padding:20px;border:1px solid var(--border,#dddfe2);border-radius:12px;background:var(--surface,#fff);overflow:hidden}
-.spx-evh b{display:block;font:700 16px/20px "Plus Jakarta Sans",var(--f-ui,system-ui,sans-serif)}
-.spx-evh span{display:block;margin-top:4px;font:700 14px/20px "Plus Jakarta Sans",var(--f-ui,system-ui,sans-serif);color:var(--spx-mute)}
-.spx-evs{flex:1;min-height:0;display:flex;flex-direction:column;gap:16px}
-.spx-ev{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px;padding:8px;border-radius:6px;background:color-mix(in srgb,var(--c) var(--t),var(--surface,#fff));overflow:hidden}
-.spx-evrow{display:flex;gap:8px;align-items:stretch}
-.spx-evrow>i{width:4px;border-radius:8px;background:var(--c);flex:none}
-.spx-evbody{display:flex;flex-direction:column;gap:8px;min-width:0}
-.spx-evbody b{display:block;font:590 12px/12px var(--f-ui,system-ui,sans-serif);margin-bottom:8px}
-.spx-evbody span.t{display:block;font-size:12px;line-height:12px}
+.spx-meta{display:flex;flex-direction:column;align-items:flex-start;gap:8px;font-size:11px;line-height:16px;color:var(--spx-mute)}
+.spx-meta b{display:block;margin-top:2px;font-weight:600;color:var(--text,#2d2d2d);white-space:nowrap}
+.spx-chips{display:flex;gap:6px}
+.spx-chips span{padding:4px 10px;border-radius:999px;background:#801fff;color:#fff;font:590 11px/14px var(--f-ui,system-ui,sans-serif);white-space:nowrap}
+.spx-evcard{display:flex;flex-direction:column;gap:12px}
+.spx-evh b{display:block;font:700 14px/20px "Plus Jakarta Sans",var(--f-ui,system-ui,sans-serif)}
+.spx-evh span{display:block;font:500 12px/16px "Plus Jakarta Sans",var(--f-ui,system-ui,sans-serif);color:var(--spx-mute)}
+.spx-evs{display:flex;flex-direction:column;gap:8px}
+.spx-ev{display:flex;gap:8px;align-items:center;padding:8px 10px 8px 8px;border-radius:8px;background:color-mix(in srgb,var(--c) var(--t),var(--surface,#fff))}
+.spx-ev>i{align-self:stretch;width:3px;border-radius:4px;background:var(--c);flex:none}
+.spx-evbody{flex:1;min-width:0}
+.spx-evbody b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:590 12px/16px var(--f-ui,system-ui,sans-serif)}
+.spx-evmeta{display:flex;align-items:center;gap:8px;margin-top:2px;font-size:11px;line-height:16px;color:var(--spx-mute)}
 .spx-avs{display:flex}
-.spx-avs span{width:20px;height:20px;margin-right:-10px;border:1px solid var(--border,#e6e6e6);border-radius:50%}
+.spx-avs span{width:16px;height:16px;margin-right:-6px;border:1.5px solid var(--surface,#fff);border-radius:50%}
 .spx-avs span:last-child{margin-right:0}
-.spx-join{margin-top:auto;padding:4px 12px;border:1px solid var(--spx-line);border-radius:6px;background:var(--surface,#fff);text-align:center;font:590 12px/20px var(--f-ui,system-ui,sans-serif)}
-.spx-more{display:flex;gap:8px;align-items:center;justify-content:center;padding:4px 12px;border:1px solid var(--spx-p);border-radius:6px;color:var(--spx-p);font:590 12px/20px var(--f-ui,system-ui,sans-serif)}
-.spx-tt{position:relative;display:flex;flex-direction:column;gap:16px;padding:16px;border:1px solid var(--border,#dddfe2);border-radius:8px;background:var(--surface,#fff);overflow:hidden}
-.spx-tt b{font:700 28px/32px var(--f-ui,system-ui,sans-serif)}
-.spx-tt span{font-size:16px;line-height:20px;color:var(--spx-mute)}
-.spx-tt svg{position:absolute;right:-17px;top:34px}
+.spx-join{flex:none;padding:3px 10px;border:1px solid var(--spx-line);border-radius:6px;background:var(--surface,#fff);font:590 11px/16px var(--f-ui,system-ui,sans-serif)}
+.spx-more{display:flex;gap:6px;align-items:center;justify-content:center;padding:5px 12px;border:1px solid var(--spx-p);border-radius:6px;color:var(--spx-p);font:590 12px/16px var(--f-ui,system-ui,sans-serif)}
+.spx-more svg{width:14px;height:14px}
+.spx-tt{display:flex;align-items:center;gap:10px}
+.spx-tt b{font:700 24px/28px var(--f-ui,system-ui,sans-serif)}
+.spx-tt span{font-size:13px;line-height:20px;color:var(--spx-mute)}
+.spx-tt svg{margin-left:auto;flex:none}
 .spx-acct{display:flex;align-items:center;gap:8px;padding:10px 16px 0;font-size:12px;color:var(--text-2,#455162);min-width:0}
 .spx-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--green-500,#46B881)}
 .spx-dot[data-s="saving"]{background:var(--orange-500,#FFAD0D)}
@@ -158,8 +155,8 @@
 .spx-out:hover{background:var(--surface-muted,#f9f9f9);color:var(--text,#2d2d2d)}
 .app.collapsed .spx-email{display:none}
 .app.collapsed .spx-acct{flex-direction:column;padding:10px 0 0}
-.spx-list{display:flex;flex-direction:column;gap:6px;margin:0 0 14px;max-height:min(46vh,360px);overflow:auto;padding:2px}
-.spx-card .spx-opt{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border,#e6e6e6);border-radius:8px;cursor:pointer;font-weight:400!important;margin:0!important}
+.spx-list{display:flex;flex-direction:column;gap:6px;margin:0 0 14px;max-height:min(46vh,340px);overflow:auto;padding:2px}
+.spx-card .spx-opt{display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid var(--border,#e6e6e6);border-radius:8px;cursor:pointer;font-weight:400!important;margin:0!important}
 .spx-opt:has(input:checked){border-color:var(--spx-p);background:var(--primary-soft,#EFF6FF)}
 .spx-opt:has(input:disabled){cursor:not-allowed;opacity:.55}
 .spx-opt input{width:16px!important;height:16px!important;margin:0!important;flex-shrink:0;accent-color:var(--spx-p)}
@@ -168,17 +165,17 @@
 .spx-who b{font-weight:600}
 .spx-who small{color:var(--text-2,#455162);font-size:12px}
 .spx-new{display:grid;gap:0;margin:0 0 6px}
-@media (max-width:1100px){
+@media (max-height:760px){.spx-tt,.spx-ev:nth-child(3){display:none}}
+@media (max-height:600px){.spx-evcard{display:none}}
+@media (max-width:1000px){
+  .spx-gate{grid-template-columns:minmax(0,1fr)}
   .spx-right{display:none}
-  .spx-left{flex:1 1 100%}
-  .spx-top,.spx-body{width:100%;max-width:560px;margin-inline:auto}
+  .spx-left{padding:24px}
 }
 @media (max-width:600px){
-  .spx-left{padding:24px;gap:32px}
-  .spx-logo{margin-bottom:32px}
-  .spx-hero h1{font-size:28px;line-height:36px}
-  .spx-hero p{font-size:16px;line-height:24px}
-  .spx-actions{margin-top:32px}
+  .spx-hero{margin-bottom:24px}
+  .spx-hero h1{font-size:26px;line-height:34px}
+  .spx-main{padding:24px 0}
 }`;
 
   let gate, client, user, started = false;
@@ -191,8 +188,8 @@
   const ICON = {
     mail: svg('<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7.5l8.5 6 8.5-6"/>'),
     lock: svg('<rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/>'),
-    eye: svg('<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>'),
-    eyeOff: svg('<path d="M3 3l18 18"/><path d="M10.6 6.1A10 10 0 0 1 12 6c6.4 0 10 6 10 6a17 17 0 0 1-3.2 3.9M6.5 7.6A16.6 16.6 0 0 0 2 12s3.6 6 10 6a9.8 9.8 0 0 0 4.1-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>'),
+    eye: svg('<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>', 18),
+    eyeOff: svg('<path d="M3 3l18 18"/><path d="M10.6 6.1A10 10 0 0 1 12 6c6.4 0 10 6 10 6a17 17 0 0 1-3.2 3.9M6.5 7.6A16.6 16.6 0 0 0 2 12s3.6 6 10 6a9.8 9.8 0 0 0 4.1-.9"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>', 18),
     arrow: svg('<path d="M5 12h14M13 6l6 6-6 6"/>'),
     ms: '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="2" width="9.5" height="9.5" fill="#F25022"/><rect x="12.5" y="2" width="9.5" height="9.5" fill="#7FBA00"/><rect x="2" y="12.5" width="9.5" height="9.5" fill="#00A4EF"/><rect x="12.5" y="12.5" width="9.5" height="9.5" fill="#FFB900"/></svg>'
   };
@@ -212,30 +209,34 @@
     };
   }
 
+  /* Decorative product preview. Static sample content, hidden from assistive tech. */
   function previewHTML() {
     const d = new Date();
     const today = `${d.toLocaleDateString("en-US", { weekday: "long" })}, ${String(d.getDate()).padStart(2, "0")} ${d.toLocaleDateString("en-US", { month: "short" })} ${d.getFullYear()}`;
     const avs = a => `<div class="spx-avs">${a.map(c => `<span style="background:${c}"></span>`).join("")}</div>`;
-    const ev = (c, t, title, time, a) => `<div class="spx-ev" style="--c:${c};--t:${t}%"><div class="spx-evrow"><i></i><div class="spx-evbody"><div><b>${title}</b><span class="t">${time}</span></div>${avs(a)}</div></div><div class="spx-join">Join</div></div>`;
-    return `<div class="spx-wrap"><div class="spx-pcard">
+    const ev = (c, t, title, time, a) => `<div class="spx-ev" style="--c:${c};--t:${t}%"><i></i><div class="spx-evbody"><b>${title}</b><div class="spx-evmeta"><span>${time}</span>${avs(a)}</div></div><span class="spx-join">Join</span></div>`;
+    return `<div class="spx-stack">
+      <div class="spx-pcard">
         <div class="spx-pt"><b>E Collection</b><span>-</span><span>Sprint 5_2025</span></div>
-        <div class="spx-lbl">Sprint Goals</div>
-        <p class="spx-goal">Meningkatkan keandalan dan visibilitas proses SFTP melalui finalisasi konfigurasi, logging, dan skema resend untuk mendukung monitoring system yang ada</p>
-        <div><div class="spx-lbl" style="font-weight:600">Sprint Progress</div>
-          <div class="spx-nums"><div class="spx-n"><span class="big">12</span><span class="sm">/24</span><span class="spx-cap">Total of task</span></div><span class="spx-vr"></span><div class="spx-n"><span class="big">10</span><span class="spx-cap">Total of task</span></div></div></div>
-        <div class="spx-bar"><div class="spx-track"><i style="width:50%"></i></div><b>50%</b></div>
-        <div class="spx-tb"><span>Timebox</span><b style="font-weight:600">Sept 21, 2022 - Sept 25, 2022</b></div>
-        <div class="spx-chips"><span>10 Days Timebox</span><span>4 Days Left</span></div></div></div>
-      <div class="spx-wrap"><div class="spx-evcard">
+        <div><div class="spx-lbl">Sprint Goals</div>
+          <p class="spx-goal">Meningkatkan keandalan dan visibilitas proses SFTP melalui finalisasi konfigurasi, logging, dan skema resend untuk mendukung monitoring system yang ada</p></div>
+        <div><div class="spx-lbl">Sprint Progress</div>
+          <div class="spx-prog"><span class="big">12</span><span class="sm">/24</span><span class="spx-cap">Total of task</span><b>50%</b></div></div>
+        <div class="spx-track"><i style="width:50%"></i></div>
+        <div class="spx-meta"><div>Timebox<b>Sept 21 - Sept 25, 2022</b></div><div class="spx-chips"><span>10 Days Timebox</span><span>4 Days Left</span></div></div>
+      </div>
+      <div class="spx-evcard">
         <div class="spx-evh"><b>Today’s Event</b><span>${today}</span></div>
         <div class="spx-evs">
           ${ev("#0c6ef9", 8, "Daily scrum - Spectrum Sprint 12", "09.00 - 09.15", ["#0779E4", "#7c3aed", "#db2777"])}
           ${ev("#ffad0d", 8, "Weekly UI/UX", "11.00 - 12.00", ["#f59e0b", "#0891b2", "#64748b"])}
           ${ev("#a865ff", 12, "Qrisan - Sprint Review &amp; Retro", "13.00 - 15.00", ["#059669", "#b45309", "#0779E4"])}
         </div>
-        <div class="spx-more">See More ${ICON.arrow}</div></div></div>
-      <div class="spx-wrap"><div class="spx-tt"><b>20</b><span>Total Task</span>
-        <svg width="100" height="100" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 62 38 18l50 10 8 52-46 16z" fill="color-mix(in srgb,#0c6ef9 12%,var(--surface,#fff))"/><rect x="36" y="38" width="30" height="38" rx="5" fill="#0c6ef9"/><rect x="43" y="33" width="16" height="9" rx="3" fill="#0c6ef9" stroke="var(--surface,#fff)" stroke-width="2"/><path d="M43 52h16M43 60h16M43 68h10" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg></div></div>`;
+        <div class="spx-more">See More ${ICON.arrow}</div>
+      </div>
+      <div class="spx-tt"><b>20</b><span>Total Task</span>
+        <svg width="40" height="40" viewBox="0 0 100 100" aria-hidden="true"><path d="M8 62 38 18l50 10 8 52-46 16z" fill="color-mix(in srgb,#0c6ef9 12%,var(--surface,#fff))"/><rect x="36" y="38" width="30" height="38" rx="5" fill="#0c6ef9"/><rect x="43" y="33" width="16" height="9" rx="3" fill="#0c6ef9" stroke="var(--surface,#fff)" stroke-width="2"/><path d="M43 52h16M43 60h16M43 68h10" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg></div>
+    </div>`;
   }
 
   function mountGate() {
@@ -243,12 +244,12 @@
     gate = document.createElement("div"); gate.className = "spx-gate"; gate.setAttribute("role", "dialog");
     gate.setAttribute("aria-modal", "true"); gate.setAttribute("aria-labelledby", "spxTitle");
     gate.innerHTML = `<section class="spx-left">
-        <div class="spx-top">
-          <div class="spx-logo"><div class="logo-mark">S</div><b>SPEctrum</b></div>
+        <div class="spx-logo"><div class="logo-mark">S</div><b>SPEctrum</b></div>
+        <div class="spx-main">
           <div class="spx-hero" id="spxHero" hidden><h1 id="spxHeroTitle">Simplify Work, Collaborate Better, Deliver More</h1>
             <p>Organize tasks, monitor progress, and ensure every project stays on track — effortlessly and efficiently.</p></div>
+          <div class="spx-body" id="spxBody"></div>
         </div>
-        <div class="spx-body" id="spxBody"></div>
         <div class="spx-foot">Powered by SPE Solution 2025</div>
       </section>
       <aside class="spx-right" aria-hidden="true">${previewHTML()}</aside>`;
