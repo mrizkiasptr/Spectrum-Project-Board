@@ -40,7 +40,7 @@ After the first sign-in, each person picks which team member they are (or adds t
 2. Framework preset: **Other**. Leave the build command and output directory empty.
 3. Deploy. The board is served at `/`.
 
-Production: https://spectrum-project-board.vercel.app (Vercel project `spectrum-project-board`, deploys from `main`).
+Production: https://spectrum-spe.vercel.app (Vercel project `spectrum-project-board`, deploys from `main`). The older https://spectrum-project-board.vercel.app address still works.
 
 Then in Supabase (**Authentication → URL Configuration**) set **Site URL** to the Vercel domain and add it to **Redirect URLs**, so email-confirmation and password-reset links open the deployed app.
 
